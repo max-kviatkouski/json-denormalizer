@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +25,7 @@ class JsonToTableTest {
         JsonNode jsonNode = getJsonNodeFromFile("pojo.json");
         JsonToTable jsonToTable = new JsonToTable();
 
-        List<Map<String, String>> actual = jsonToTable.jsonToMap(jsonNode, "");
+        List<Map<String, String>> actual = jsonToTable.jsonToMap(jsonNode);
         assertEquals(expected, actual);
     }
 
@@ -44,7 +46,7 @@ class JsonToTableTest {
         JsonNode jsonNode = getJsonNodeFromFile("pojo.json");
         JsonToTable jsonToTable = new JsonToTable();
 
-        List<Map<String, String>> actual = jsonToTable.jsonToMap(jsonNode, "");
+        List<Map<String, String>> actual = jsonToTable.jsonToMap(jsonNode);
         assertEquals(expected, actual);
     }
 
@@ -61,7 +63,7 @@ class JsonToTableTest {
         JsonNode jsonNode = getJsonNodeFromFile("pojo-with-pojo.json");
         JsonToTable jsonToTable = new JsonToTable();
 
-        List<Map<String, String>> actual = jsonToTable.jsonToMap(jsonNode, "");
+        List<Map<String, String>> actual = jsonToTable.jsonToMap(jsonNode);
         assertEquals(expected, actual);
     }
 
@@ -82,7 +84,7 @@ class JsonToTableTest {
         JsonNode jsonNode = getJsonNodeFromFile("pojo-with-primitive-array.json");
         JsonToTable jsonToTable = new JsonToTable();
 
-        List<Map<String, String>> actual = jsonToTable.jsonToMap(jsonNode, "");
+        List<Map<String, String>> actual = jsonToTable.jsonToMap(jsonNode);
         assertEquals(expected, actual);
     }
 
@@ -103,7 +105,7 @@ class JsonToTableTest {
         JsonNode jsonNode = getJsonNodeFromFile("multilevel-array.json");
         JsonToTable jsonToTable = new JsonToTable();
 
-        List<Map<String, String>> actual = jsonToTable.jsonToMap(jsonNode, "");
+        List<Map<String, String>> actual = jsonToTable.jsonToMap(jsonNode);
         assertEquals(expected, actual);
     }
 
@@ -117,7 +119,24 @@ class JsonToTableTest {
         JsonNode jsonNode = getJsonNodeFromFile("plain-array.json");
         JsonToTable jsonToTable = new JsonToTable();
 
-        List<Map<String, String>> actual = jsonToTable.jsonToMap(jsonNode, "");
+        List<Map<String, String>> actual = jsonToTable.jsonToMap(jsonNode);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("Two overlapping sets of fields are unified")
+    void unify() {
+        List<Map<String, String>> input = List.of(
+                Map.of("key1", "val1", "key2", "val2"),
+                Map.of("key1", "val1", "key3", "val3")
+        );
+        List<Map<String, String>> expected = List.of(
+                Map.of("key1", "val1", "key2", "val2", "key3", ""),
+                Map.of("key1", "val1", "key2", "", "key3", "val3")
+        );
+
+        JsonToTable jsonToTable = new JsonToTable();
+        List<Map<String, String>> actual = jsonToTable.unify(input);
         assertEquals(expected, actual);
     }
 }
