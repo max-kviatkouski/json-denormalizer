@@ -1,0 +1,36 @@
+{
+  "name": "Andy",
+  "last_name": "Borley",
+  "houses": [
+    {
+      "address": "105 Clean St",
+      "city": "Boston",
+      "zip": 92019,
+      "cars": [
+        {
+          "make": "Ford",
+          "model": "F150"
+        },{
+          "make": "Lexus",
+          "model": "RX350"
+        }
+      ]
+    },{
+      "address": "203 Straigh St",
+      "city": "Chicago",
+      "zip": 10290,
+      "cars": [
+        {
+          "make": "Toyota",
+          "model": "Camry"
+        }
+      ],
+      "motorcycles": [
+        {
+          "make": "Suzuki",
+          "model": "Boulevard C50"
+        }
+      ]
+    }
+  ]
+}

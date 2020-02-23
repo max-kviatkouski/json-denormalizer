@@ -1,0 +1,9 @@
+{
+  "make": "Mazda",
+  "model": "323",
+  "year": 1981,
+  "features": [
+    "Climate control",
+    "Heated seats"
+  ]
+}

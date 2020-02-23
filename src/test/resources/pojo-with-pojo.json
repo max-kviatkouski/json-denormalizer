@@ -1,0 +1,9 @@
+{
+  "make": "Mazda",
+  "model": "323",
+  "year": 1981,
+  "stats": {
+    "weight": 3100,
+    "towing_capacity": 5000
+  }
+}

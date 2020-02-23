@@ -1,0 +1,37 @@
+{
+  "make": "Mazda",
+  "model": "323",
+  "year": 1981,
+  "features": [
+    {
+      "name": "Climate control",
+      "perks": [
+        "Automated temperature control",
+        "Quick window defrosting"
+      ]
+    },
+    {
+      "name": "Powered seats",
+      "perks": [
+        "3-set memory for driver",
+        "9-position adjustment"
+      ]
+    },
+    {
+      "name": "Trunk enhancement",
+      "perks": [
+        "Enhanced interior lights for trunk",
+        {
+          "sub_perk1": [
+            "Spill-proof trunk liner",
+            "Cargo net"
+          ],
+          "sub_perk2": [
+            "Emergency toolkit",
+            "Organizer"
+          ]
+        }
+      ]
+    }
+  ]
+}
