@@ -5,20 +5,20 @@ import org.supercsv.io.CsvMapWriter;
 import org.supercsv.io.ICsvMapWriter;
 import org.supercsv.prefs.CsvPreference;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class JsonToTable {
-    public static void main(String args[]) throws IOException {
-        File file = new File(JsonToTable.class.getClassLoader().getResource("sample.json").getFile());
+    public static void main(String[] args) throws IOException {
+        File file = new File(Objects.requireNonNull(JsonToTable.class.getClassLoader().getResource("sample.json")).getFile());
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(file);
         JsonToTable jsonToTable = new JsonToTable();
-        List<Map<String, String>> sortedUnified = jsonToTable.sortByAllColumns(jsonToTable.unify(jsonToTable.jsonToMap(jsonNode, "")));
-        ICsvMapWriter csvMapWriter = new CsvMapWriter(new OutputStreamWriter(System.out), CsvPreference.EXCEL_PREFERENCE);
+        List<Map<String, String>> sortedUnified = jsonToTable.sortByAllColumns(jsonToTable.unify(Objects.requireNonNull(jsonToTable.jsonToMap(jsonNode, ""))));
+        Writer outWriter = new FileWriter("output.csv");
+//        Writer outWriter = new OutputStreamWriter(System.out);
+        ICsvMapWriter csvMapWriter = new CsvMapWriter(outWriter, CsvPreference.EXCEL_PREFERENCE);
         String[] sortedColumnNames = sortedUnified.get(0).keySet().stream().sorted(new HierarchicalStringComparator()).collect(Collectors.toList()).toArray(String[]::new);
         csvMapWriter.writeHeader(sortedColumnNames);
         for (Map<String, String> row : sortedUnified) {
@@ -29,7 +29,7 @@ public class JsonToTable {
 
     /**
      * This method will take a json and transform it into a denormalized table
-     * @param n
+     * @param n - parsed json
      * @return Each map in a list represents a row in a table
      */
     public List<Map<String, String>> jsonToMap(JsonNode n) {
@@ -75,14 +75,14 @@ public class JsonToTable {
             }
             return result;
         }
-        return null;
+        return new LinkedList<>();
     }
 
     /**
      * This method will update table so each Map in the list has exact same set of columns as the others in the list.
      * If a key is missing in a particular table it will be populated with empty string
      *
-     * @param table
+     * @param table representation of a table as a list of maps where each map may have different set of keys
      */
     public List<Map<String, String>> unify(List<Map<String, String>> table) {
         Set<String> globalKeySet = new HashSet<>();
@@ -103,22 +103,19 @@ public class JsonToTable {
     /**
      * This method takes all column names, sorts them in alphabetical order then sorts all rows by all columns starting
      * with first column.
-     * @param table
-     * @return
+     * @param table representation of a table as a list of maps. Maps are expected to have exactly same set of keys.
+     * @return sorted table
      */
     public List<Map<String, String>> sortByAllColumns(List<Map<String, String>> table) {
         List<Map<String, String>> result = new LinkedList<>(table);
         List<String> globalKeys = table.stream().flatMap(row -> row.keySet().stream()).collect(Collectors.toSet())
                 .stream().sorted(new HierarchicalStringComparator()).collect(Collectors.toList());
-        result.sort(new Comparator<Map<String, String>>() {
-            @Override
-            public int compare(Map<String, String> m1, Map<String, String> m2) {
-                for (String globalKey : globalKeys) {
-                    int c = m1.get(globalKey).compareTo(m2.get(globalKey));
-                    if (c != 0) return c;
-                }
-                return 0;
+        result.sort((m1, m2) -> {
+            for (String globalKey : globalKeys) {
+                int c = m1.get(globalKey).compareTo(m2.get(globalKey));
+                if (c != 0) return c;
             }
+            return 0;
         });
         return result;
     }
